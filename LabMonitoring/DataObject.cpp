@@ -14,16 +14,17 @@ void DataObject::LogHum(float value){
     Pressure += (value-Humidity)/(++HDataPoints);
 }
 
-void DataObject::LogAcc(float value[3]){
-    float absvalue = sqrt(value[0]*value[0]+value[1]*value[1]+value[2]*value[2]);
+void DataObject::LogAcc(float x,float y,float z){
+    float absvalue = sqrt(x*x+y*y+z*z);
     AvgAcc += (absvalue-AvgAcc)/(++ADataPoints);
     if(absvalue>MaxAcc) {
         MaxAcc = absvalue;
     }
 }
 
-void DataObject::LogMagField(float value[3]){
+void DataObject::LogMagField(float x,float y, float z){
     ++MDataPoints;
+    float value[] = {x,y,z};
     for(int i = 0; i<3; ++i){
         AvgMagField[i] += (value[i]-AvgMagField[i])/(MDataPoints);
     }

@@ -3,8 +3,8 @@ public:
   void LogTemp(float value);
   void LogPres(float value);
   void LogHum(float value);
-  void LogAcc(float value[3]);
-  void LogMagField(float value[3]);
+  void LogAcc(float x,float y,float z);
+  void LogMagField(float x,float y,float z);
 private:
   float Temperature = 0;
   unsigned int TDataPoints;

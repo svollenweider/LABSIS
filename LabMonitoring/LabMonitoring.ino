@@ -3,10 +3,12 @@
 #include <Adafruit_MCP9808.h>
 //Pressure,Humidity
 #include <Adafruit_BME280.h>
+//Accelerometer from the Nano, modified library from Arduino
+#include "LSM6DS3/Arduino_LSM6DS3.h"
 //I2C
 #include <Wire.h>
 //Magnetic Fields
-#include "ALS31300.h"
+#include "ALS31300/ALS31300.h"
 //RealTimeClock
 #include <RTCZero.h>
 //NTP updating the time
@@ -25,7 +27,10 @@ ALS31300 Mag(0x96);
 
 
 unsigned int millitempupdate = 500;
-unsigned long prevMillis = 0;
+unsigned int millimagupdate = 100;
+unsigned int milliaccupdate = 10;
+//some large number that the loop starts immediately
+unsigned long prevMillis = 0xF000000000000000;
 unsigned long millisec = 0;
 DataObject Data;
 
@@ -35,7 +40,7 @@ NTPClient timeClient(ntpUDP);
 
 void setup() {
   //Enable I²C
-  Wire.begin()
+  Wire.begin();
   // Enable Serial port for debugging
   Serial.begin(9600);
   while (!Serial);
@@ -58,18 +63,36 @@ void setup() {
                   Adafruit_BME280::FILTER_X16,
                   Adafruit_BME280::STANDBY_MS_0_5 );
    //init Magnetic Field Sensor
-    Mag.init();
+   Mag.init();
+   //Set up accelerometer
+   IMU.begin(false)
+   IMU.SetAccelerometer(0x00,)
 }
 
 void loop() {
   millisec = millis();
   // update temperature sensor value if {millitempupdate} milliseconds have passed
   if(millisec-prevMillis >= millitempupdate){
-    float temp = tempsensor.readTempC();
-    Data.LogTemp(temp);
+    float val = tempsensor.readTempC();
+    Data.LogTemp(val);
+    val = bme.readHumidity();
+    Data.LogHum(val);
+    val = bme.readPressure();
+    Data.LogPres(val);
+  }
+  if(millisec-prevMillis >= millimagupdate){
+    auto value = Mag.readFullLoop();
+    Data.LogMagField(value.mx,value.my,value.mz);
+  }
+  if(millisec-prevMillis >= milliaccupdate){
+    auto value = Mag.readFullLoop();
+    Data.LogMagField(value.mx,value.my,value.mz);
   }
   prevMillis=millisec;
-  Mag.
+  
+  Serial.print("Loop took ");
+  Serial.print(millis()-millisec);
+  Serial.print(" seconds\n");
 }
 
 void SyncRTC(){

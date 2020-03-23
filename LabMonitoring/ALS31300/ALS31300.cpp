@@ -133,8 +133,7 @@ SENSOR_DATA ALS31300::updateReading()
     data.angleYZ = atan2f(data.rz, data.ry) * 180.0 / M_PI;
   }
   else {
-
-}
+  }
 }
 
 SENSOR_DATA ALS31300::readFullLoop(int samples)
