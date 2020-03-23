@@ -77,66 +77,64 @@ SENSOR_DATA ALS31300::updateReading()
     return data;
   }
 
-  for (int count = 0; count < 8; ++count)
+  // Write the address that is going to be read from the ALS31300
+  Wire.beginTransmission(i2c_address);
+  Wire.write(0x28);
+  uint16_t error = Wire.endTransmission(false);
+  //I dont think this line is neccessary
+  //delay(50);
+  // The ALS31300 accepted the address
+  if (error == kNOERROR)
   {
-    // Write the address that is going to be read from the ALS31300
-    Wire.beginTransmission(i2c_address);
-    Wire.write(0x28);
-    uint16_t error = Wire.endTransmission(false);
-    delay(50);
-    // The ALS31300 accepted the address
-    if (error == kNOERROR)
-    {
-      // Start the read and request 8 bytes
-      // which are the contents of register 0x28 and 0x29
-      Wire.requestFrom(i2c_address, 8);
+    // Start the read and request 8 bytes
+    // which are the contents of register 0x28 and 0x29
+    Wire.requestFrom(i2c_address, 8);
 
-      // Read the first 4 bytes which are the contents of register 0x28
-      uint32_t value0x28 = Wire.read() << 24;
-      value0x28 += Wire.read() << 16;
-      value0x28 += Wire.read() << 8;
-      value0x28 += Wire.read();
+    // Read the first 4 bytes which are the contents of register 0x28
+    uint32_t value0x28 = Wire.read() << 24;
+    value0x28 += Wire.read() << 16;
+    value0x28 += Wire.read() << 8;
+    value0x28 += Wire.read();
 
-      // Read the next 4 bytes which are the contents of register 0x29
-      uint32_t value0x29 = Wire.read() << 24;
-      value0x29 += Wire.read() << 16;
-      value0x29 += Wire.read() << 8;
-      value0x29 += Wire.read();
+    // Read the next 4 bytes which are the contents of register 0x29
+    uint32_t value0x29 = Wire.read() << 24;
+    value0x29 += Wire.read() << 16;
+    value0x29 += Wire.read() << 8;
+    value0x29 += Wire.read();
 
-      // Take the most significant byte of each axis from register 0x28 and combine it with the least
-      // significant 4 bits of each axis from register 0x29, then sign extend the 12th bit.
-      data.x = SignExtendBitfield(((value0x28 >> 20) & 0x0FF0) | ((value0x29 >> 16) & 0x0F), 12);
-      data.y = SignExtendBitfield(((value0x28 >> 12) & 0x0FF0) | ((value0x29 >> 12) & 0x0F), 12);
-      data.z = SignExtendBitfield(((value0x28 >> 4) & 0x0FF0) | ((value0x29 >> 8) & 0x0F), 12);
+    // Take the most significant byte of each axis from register 0x28 and combine it with the least
+    // significant 4 bits of each axis from register 0x29, then sign extend the 12th bit.
+    data.x = SignExtendBitfield(((value0x28 >> 20) & 0x0FF0) | ((value0x29 >> 16) & 0x0F), 12);
+    data.y = SignExtendBitfield(((value0x28 >> 12) & 0x0FF0) | ((value0x29 >> 12) & 0x0F), 12);
+    data.z = SignExtendBitfield(((value0x28 >> 4) & 0x0FF0) | ((value0x29 >> 8) & 0x0F), 12);
 
-      // Look at the datasheet for the sensitivity of the part used.
-      // In this case, full scale range is 500 gauss, other sensitivities
-      // are 1000 gauss and 2000 gauss.
-      // Sensitivity of 500 gauss = 4.0 lsb/g
-      // Sensitivity of 1000 gauss = 2.0 lsb/g
-      // Sensitivity of 2000 gauss = 1.0 lsb/g
+    // Look at the datasheet for the sensitivity of the part used.
+    // In this case, full scale range is 500 gauss, other sensitivities
+    // are 1000 gauss and 2000 gauss.
+    // Sensitivity of 500 gauss = 4.0 lsb/g
+    // Sensitivity of 1000 gauss = 2.0 lsb/g
+    // Sensitivity of 2000 gauss = 1.0 lsb/g
 
-      data.mx = (float)data.x / 4.0;
-      data.my = (float)data.y / 4.0;
-      data.mz = (float)data.z / 4.0;
+    data.mx = (float)data.x / 4.0;
+    data.my = (float)data.y / 4.0;
+    data.mz = (float)data.z / 4.0;
 
-      // Convert the X, Y and Z values into radians
-      data.rx = (float)data.x / 4096.0 * M_TWOPI;
-      data.ry = (float)data.y / 4096.0 * M_TWOPI;
-      data.rz = (float)data.z / 4096.0 * M_TWOPI;
+    // Convert the X, Y and Z values into radians
+    data.rx = (float)data.x / 4096.0 * M_TWOPI;
+    data.ry = (float)data.y / 4096.0 * M_TWOPI;
+    data.rz = (float)data.z / 4096.0 * M_TWOPI;
 
-      // Use a four quadrant Arc Tan to convert 2
-      // axis to an angle (which is in radians) then
-      // convert the angle from radians to degrees
-      // for display.
-      data.angleXY = atan2f(data.ry, data.rx) * 180.0 / M_PI;
-      data.angleXZ = atan2f(data.rz, data.rx) * 180.0 / M_PI;
-      data.angleYZ = atan2f(data.rz, data.ry) * 180.0 / M_PI;
-    }
-    else {
-
-    }
+    // Use a four quadrant Arc Tan to convert 2
+    // axis to an angle (which is in radians) then
+    // convert the angle from radians to degrees
+    // for display.
+    data.angleXY = atan2f(data.ry, data.rx) * 180.0 / M_PI;
+    data.angleXZ = atan2f(data.rz, data.rx) * 180.0 / M_PI;
+    data.angleYZ = atan2f(data.rz, data.ry) * 180.0 / M_PI;
   }
+  else {
+
+}
 }
 
 SENSOR_DATA ALS31300::readFullLoop(int samples)
