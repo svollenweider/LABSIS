@@ -1,0 +1,5 @@
+(sym_lib_table
+  (lib (name Sensor_Temperature_mcp9808)(type Legacy)(uri ${KIPRJMOD}/Sensor_Temperature_mcp9808.lib)(options "")(descr "")(disabled))
+  (lib (name ArduinoShield-rescue)(type Legacy)(uri ${KIPRJMOD}/ArduinoShield-rescue.lib)(options "")(descr "")(disabled))
+  (lib (name ArduinoEnivronmentShield)(type Legacy)(uri ${KIPRJMOD}/ArduinoEnvironmentShield.lib)(options "")(descr ""))
+)
