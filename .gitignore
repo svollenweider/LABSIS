@@ -34,5 +34,4 @@
 ArduinoShield/fp-info-cache
 
 # Files
-*.ini
-!*example.ini
+NetworkSettings.h

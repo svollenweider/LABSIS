@@ -1,5 +1,4 @@
-
-#include "NetworkSettings.ini"
+#include "NetworkSettings_example.ini"
 //TemperatureSensor
 #include <Adafruit_MCP9808.h>
 //Pressure,Humidity
