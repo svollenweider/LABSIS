@@ -1,14 +1,15 @@
 
+#include "NetworkSettings.ini"
 //TemperatureSensor
 #include <Adafruit_MCP9808.h>
 //Pressure,Humidity
 #include <Adafruit_BME280.h>
 //Accelerometer from the Nano, modified library from Arduino
-#include "LSM6DS3/Arduino_LSM6DS3.h"
+#include "Arduino_LSM6DS3.h"
 //I2C
 #include <Wire.h>
 //Magnetic Fields
-#include "ALS31300/ALS31300.h"
+#include "ALS31300.h"
 //RealTimeClock
 #include <RTCZero.h>
 //NTP updating the time
@@ -28,9 +29,8 @@ ALS31300 Mag(0x96);
 
 unsigned int millitempupdate = 500;
 unsigned int millimagupdate = 100;
-unsigned int milliaccupdate = 10;
 //some large number that the loop starts immediately
-unsigned long prevMillis = 0xF000000000000000;
+unsigned long prevMillis = (unsigned long)0xFFFFFFFFFFFFFFF;
 unsigned long millisec = 0;
 DataObject Data;
 
@@ -39,6 +39,11 @@ WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP);
 
 void setup() {
+  //Comment if WPA2, Uncomment for WPA2 enterprise
+  WiFi.beginEnterprise(NETWORKSSID,USERNAME,PASSWORD)
+  //Uncomment if WPA2, comment for WPA2 enterprise
+  //WiFi.begin(NETWORKSSID,PASSWORD)
+  
   //Enable I²C
   Wire.begin();
   // Enable Serial port for debugging
@@ -65,8 +70,10 @@ void setup() {
    //init Magnetic Field Sensor
    Mag.init();
    //Set up accelerometer
-   IMU.begin(false)
-   IMU.SetAccelerometer(0x00,)
+   IMU.begin(false);
+   IMU.setAccelerometer(B10100000,B00000000); //1.66kHz, 2g, 400Hz Filter Bandwidth
+   IMU.setGyroscope(B00000000,B00000000); // Power-down gyroscope
+   
 }
 
 void loop() {
@@ -84,16 +91,18 @@ void loop() {
     auto value = Mag.readFullLoop();
     Data.LogMagField(value.mx,value.my,value.mz);
   }
-  if(millisec-prevMillis >= milliaccupdate){
-    auto value = Mag.readFullLoop();
-    Data.LogMagField(value.mx,value.my,value.mz);
-  }
+  if(IMU.accelerationAvailable()){
+    float x,y,z;
+    auto value = IMU.readAcceleration(x,y,z);
+    Data.LogAcc(x,y,z);
+    }
   prevMillis=millisec;
-  
   Serial.print("Loop took ");
   Serial.print(millis()-millisec);
-  Serial.print(" seconds\n");
+  Serial.print(" milliseconds\n");
 }
+
+
 
 void SyncRTC(){
     timeClient.update();
