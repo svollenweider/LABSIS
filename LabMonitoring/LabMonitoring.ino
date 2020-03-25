@@ -1,10 +1,9 @@
-#include "NetworkSettings_example.ini"
 //TemperatureSensor
 #include <Adafruit_MCP9808.h>
 //Pressure,Humidity
 #include <Adafruit_BME280.h>
 //Accelerometer from the Nano, modified library from Arduino
-#include "Arduino_LSM6DS3.h"
+#include "LSM6DS3.h"
 //I2C
 #include <Wire.h>
 //Magnetic Fields
@@ -18,6 +17,7 @@
 #include <WiFiUDP.h>
 //DataObject
 #include "DataObject.h"
+#include "InfluxDBConnection.h"
 
 Adafruit_BME280 bme;
 Adafruit_MCP9808 tempsensor;
@@ -25,13 +25,16 @@ Adafruit_MCP9808 tempsensor;
 //Adress according to Wiring and Spec Sheet
 ALS31300 Mag(0x96);
 
-
-unsigned int millitempupdate = 500;
-unsigned int millimagupdate = 100;
+//updateinterval to database (s)
+unsigned int databaseinterval = 10;
+//updateinterval for the sensors (ms)
+unsigned long millitempupdate = 500;
+unsigned long millimagupdate = 100;
 //some large number that the loop starts immediately
 unsigned long prevMillis = (unsigned long)0xFFFFFFFFFFFFFFF;
 unsigned long millisec = 0;
 DataObject Data;
+int lastsavedseconds = -1;
 
 RTCZero rtc;
 WiFiUDP ntpUDP;
@@ -39,10 +42,14 @@ NTPClient timeClient(ntpUDP);
 
 void setup() {
   //Comment if WPA2, Uncomment for WPA2 enterprise
-  WiFi.beginEnterprise(NETWORKSSID,USERNAME,PASSWORD)
+  WiFi.beginEnterprise(NETWORKSSID,USERNAME,PASSWORD);
   //Uncomment if WPA2, comment for WPA2 enterprise
   //WiFi.begin(NETWORKSSID,PASSWORD)
-  
+  SyncRTC();
+  //Alarm at 2 AM to set the clock
+  rtc.setAlarmTime(2,0,0);
+  rtc.enableAlarm(RTCZero::Alarm_Match::MATCH_HHMMSS);
+  rtc.attachInterrupt(SyncRTC);
   //Enable I²C
   Wire.begin();
   // Enable Serial port for debugging
@@ -70,14 +77,13 @@ void setup() {
    Mag.init();
    //Set up accelerometer
    IMU.begin(false);
-   IMU.setAccelerometer(B10100000,B00000000); //1.66kHz, 2g, 400Hz Filter Bandwidth
+   IMU.setAccelerometer(B10100000,B00000000); //1.66kHz, 2g, 400Hz Filter Bandwidth, high power mode
    IMU.setGyroscope(B00000000,B00000000); // Power-down gyroscope
-   
 }
 
 void loop() {
   millisec = millis();
-  // update temperature sensor value if {millitempupdate} milliseconds have passed
+  // update temperature,pressure and humidity values if {millitempupdate} milliseconds have passed
   if(millisec-prevMillis >= millitempupdate){
     float val = tempsensor.readTempC();
     Data.LogTemp(val);
@@ -86,22 +92,27 @@ void loop() {
     val = bme.readPressure();
     Data.LogPres(val);
   }
+  // update temperature sensor value if {millimagupdate} milliseconds have passed
   if(millisec-prevMillis >= millimagupdate){
     auto value = Mag.readFullLoop();
     Data.LogMagField(value.mx,value.my,value.mz);
   }
+  //get accelerometer data
   if(IMU.accelerationAvailable()){
     float x,y,z;
     auto value = IMU.readAcceleration(x,y,z);
     Data.LogAcc(x,y,z);
     }
+  //set current Millis
   prevMillis=millisec;
   Serial.print("Loop took ");
   Serial.print(millis()-millisec);
   Serial.print(" milliseconds\n");
+  //save whenever clock is at 0 in the last digit, only save once
+  if(!rtc.getSeconds()%10 && lastsavedseconds != rtc.getSeconds()){
+    
+    }
 }
-
-
 
 void SyncRTC(){
     timeClient.update();

@@ -1,8 +1,9 @@
+#ifndef DATABASECOM
 #include "DataObject.h"
 
-class DataBase {
-	virtual void WriteToDataBase(string Command) = 0;
-	virtual ~DataBase() = 0;
+class DataBaseConnection {
+  virtual void WriteToDataBase(DataObject &Data) = 0;
+	virtual ~DataBaseConnection() = 0;
 };
 
-Base::~Base(){} //Compulsory Destructor
+DataBaseConnection::~DataBaseConnection(){} //Compulsory Destructor

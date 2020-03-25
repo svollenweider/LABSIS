@@ -1,3 +1,6 @@
+#ifndef DATAOBJECT
+#define DATAOBJECT
+
 class DataObject{
 public:  
   void LogTemp(float value);
@@ -20,3 +23,5 @@ private:
   float MaxMagAbsField = 0;
   unsigned int MDataPoints;
 };
+
+#endif
