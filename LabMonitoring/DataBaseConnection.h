@@ -7,3 +7,5 @@ class DataBaseConnection {
 };
 
 DataBaseConnection::~DataBaseConnection(){} //Compulsory Destructor
+
+#endif
