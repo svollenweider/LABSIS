@@ -31,7 +31,14 @@
 *.out
 *.app
 
-ArduinoShield/fp-info-cache
+
 
 # Files
 NetworkSettings.h
+
+#vscode
+.vscode
+
+#include ArduinoShield Libraries exclude cache
+!ArduinoShield/*.lib
+ArduinoShield/fp-info-cache
