@@ -8,6 +8,7 @@ public:
   void LogHum(float value);
   void LogAcc(float x,float y,float z);
   void LogMagField(float x,float y,float z);
+  String getMeasurements(String separator);
 private:
   float Temperature = 0;
   unsigned int TDataPoints;

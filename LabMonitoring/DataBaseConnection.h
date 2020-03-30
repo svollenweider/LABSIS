@@ -1,11 +1,10 @@
-#ifndef DATABASECOM
+#ifndef DATABASECON
+#define DATABASECON
 #include "DataObject.h"
 
 class DataBaseConnection {
-  virtual void WriteToDataBase(DataObject &Data) = 0;
-	virtual ~DataBaseConnection() = 0;
+public:
+  virtual bool writeToDataBase(DataObject &Data){return false;};
 };
-
-DataBaseConnection::~DataBaseConnection(){} //Compulsory Destructor
 
 #endif

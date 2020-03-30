@@ -1,4 +1,5 @@
-//TemperatureSensor
+#include "NetworkSettings_example.h"
+//TemperatureSensor Set Arduino variable to set ADAFRuit correctly
 #include <Adafruit_MCP9808.h>
 //Pressure,Humidity
 #include <Adafruit_BME280.h>
@@ -17,10 +18,12 @@
 #include <WiFiUDP.h>
 //DataObject
 #include "DataObject.h"
+#include "DataBaseConnection.h"
 #include "InfluxDBConnection.h"
 
 Adafruit_BME280 bme;
 Adafruit_MCP9808 tempsensor;
+DataBaseConnection DBConn = InfluxDBConnection("Server","Accesstoken", "", "","");
 
 //Adress according to Wiring and Spec Sheet
 ALS31300 Mag(0x96);
@@ -63,7 +66,7 @@ void setup() {
     }
   tempsensor.setResolution(3);
   //Init BME280
-  if (! bme.begin(0x77, &Wire)) {
+  if (!bme.begin(0x77, &Wire)) {
       Serial.println("Could not find a valid BME280 sensor, check wiring or adress!");
       while (1);
   }
@@ -110,7 +113,8 @@ void loop() {
   Serial.print(" milliseconds\n");
   //save whenever clock is at 0 in the last digit, only save once
   if(!rtc.getSeconds()%10 && lastsavedseconds != rtc.getSeconds()){
-    
+    lastsavedseconds = rtc.getSeconds();
+
     }
 }
 

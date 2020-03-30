@@ -518,13 +518,10 @@ Wire Wire Line
 Wire Wire Line
 	2350 5300 2100 5300
 Connection ~ 2350 5850
-Connection ~ 2350 5300
 Text GLabel 8850 2500 0    50   Input ~ 0
 DFlow
 Wire Wire Line
 	9050 2500 8850 2500
-Text GLabel 2100 4950 1    50   Input ~ 0
-DFlow
 $Comp
 L Diode:MM3Zxx D1
 U 1 1 5E83429A
@@ -999,22 +996,6 @@ F 3 "~" H 950 5200 50  0001 C CNN
 	1    950  5200
 	1    0    0    -1  
 $EndComp
-$Comp
-L Device:R R9
-U 1 1 5E71C48D
-P 2500 5300
-F 0 "R9" H 2570 5346 50  0000 L CNN
-F 1 "470" H 2570 5255 50  0000 L CNN
-F 2 "Resistor_SMD:R_0201_0603Metric" V 2430 5300 50  0001 C CNN
-F 3 "~" H 2500 5300 50  0001 C CNN
-	1    2500 5300
-	0    -1   -1   0   
-$EndComp
-Wire Wire Line
-	2650 5300 2750 5300
-Wire Wire Line
-	2100 4950 2100 5300
-Connection ~ 2100 5300
 Wire Wire Line
 	3550 3700 3600 3700
 Wire Wire Line
@@ -1144,49 +1125,22 @@ Wire Wire Line
 	10050 2300 10400 2300
 Wire Wire Line
 	10050 2400 10400 2400
-Wire Wire Line
-	10050 2700 10400 2700
-Wire Wire Line
-	10050 2800 10400 2800
 Text GLabel 10400 2300 2    50   Input ~ 0
 A2
 Text GLabel 10400 2400 2    50   Input ~ 0
 A3
-Text GLabel 10400 2700 2    50   Input ~ 0
-A6
-Text GLabel 10400 2800 2    50   Input ~ 0
-A7
 Wire Notes Line
 	7400 500  8300 500 
 Wire Notes Line
 	7400 2500 7400 500 
-$Comp
-L Connector_Generic:Conn_01x04 J_A1
-U 1 1 5E87F739
-P 8050 800
-F 0 "J_A1" H 8000 1000 50  0000 L CNN
-F 1 "J_A" V 8200 500 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 8050 800 50  0001 C CNN
-F 3 "~" H 8050 800 50  0001 C CNN
-	1    8050 800 
-	1    0    0    -1  
-$EndComp
-Text GLabel 7750 800  0    50   Input ~ 0
-A6
-Text GLabel 7750 700  0    50   Input ~ 0
-A7
-Text GLabel 7750 1000 0    50   Input ~ 0
+Text GLabel 7800 900  0    50   Input ~ 0
 A2
-Text GLabel 7750 900  0    50   Input ~ 0
+Text GLabel 7800 800  0    50   Input ~ 0
 A3
 Wire Wire Line
-	7750 700  7850 700 
+	7900 800  7800 800 
 Wire Wire Line
-	7750 800  7850 800 
-Wire Wire Line
-	7850 900  7750 900 
-Wire Wire Line
-	7750 1000 7850 1000
+	7800 900  7900 900 
 Text Notes 7450 2450 0    50   ~ 0
 Headers
 $Comp
@@ -1302,4 +1256,34 @@ $EndComp
 Wire Wire Line
 	7900 2150 7900 2200
 Connection ~ 7900 2150
+Text GLabel 2100 4950 1    50   Input ~ 0
+DFlow
+Connection ~ 2100 5300
+Wire Wire Line
+	2100 4950 2100 5300
+Wire Wire Line
+	2650 5300 2750 5300
+Connection ~ 2350 5300
+$Comp
+L Device:R R9
+U 1 1 5E71C48D
+P 2500 5300
+F 0 "R9" H 2570 5346 50  0000 L CNN
+F 1 "470R" H 2570 5255 50  0000 L CNN
+F 2 "Resistor_SMD:R_0201_0603Metric" V 2430 5300 50  0001 C CNN
+F 3 "~" H 2500 5300 50  0001 C CNN
+	1    2500 5300
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Connector_Generic:Conn_01x02 J_A1
+U 1 1 5E898E60
+P 8100 800
+F 0 "J_A1" H 8018 593 50  0000 C CNN
+F 1 "J_A" V 8200 800 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 8100 800 50  0001 C CNN
+F 3 "~" H 8100 800 50  0001 C CNN
+	1    8100 800 
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
