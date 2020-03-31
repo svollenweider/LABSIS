@@ -39,7 +39,7 @@ NetworkSettings.h
 .vscode
 
 #exclude ArduinoShieldBackups
-ArduinoShield/*.sch
+*.sch
 
 #include ArduinoShield Libraries exclude cache
 !ArduinoShield/*.lib
