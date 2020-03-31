@@ -12,9 +12,8 @@ private:
   String adress;
   String deviceName;
   String dataBaseString;
-  const uint8_t port = 8086;
+  const uint8_t port = (uint8_t)8086;
 };
 
-DataBaseConnection::~DataBaseConnection(){} //Compulsory Destructor
 
 #endif

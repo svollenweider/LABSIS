@@ -1,7 +1,6 @@
 
 #include "DataObject.h"
 #include <math.h>
-#include <string.h>
 
 void DataObject::LogTemp(float value){
     Temperature += (value-Temperature)/(++TDataPoints);

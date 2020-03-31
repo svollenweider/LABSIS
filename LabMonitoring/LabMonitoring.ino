@@ -1,4 +1,4 @@
-#include "NetworkSettings_example.h"
+#include "NetworkSettings.h"
 //TemperatureSensor Set Arduino variable to set ADAFRuit correctly
 #include <Adafruit_MCP9808.h>
 //Pressure,Humidity
@@ -44,22 +44,36 @@ WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP);
 
 void setup() {
-  //Comment if WPA2, Uncomment for WPA2 enterprise
-  WiFi.beginEnterprise(NETWORKSSID,USERNAME,PASSWORD);
-  //Uncomment if WPA2, comment for WPA2 enterprise
-  //WiFi.begin(NETWORKSSID,PASSWORD)
-  SyncRTC();
-  //Alarm at 2 AM to set the clock
-  rtc.setAlarmTime(2,0,0);
-  rtc.enableAlarm(RTCZero::Alarm_Match::MATCH_HHMMSS);
-  rtc.attachInterrupt(SyncRTC);
-  //Enable I²C
-  Wire.begin();
   // Enable Serial port for debugging
   Serial.begin(9600);
   while (!Serial);
+  //Comment if WPA2, Uncomment for WPA2 enterprise
+  //WiFi.beginEnterprise(NETWORKSSID,USERNAME,PASSWORD);
+  //Uncomment if WPA2, comment for WPA2 enterprise
+  WiFi.begin(NETWORKSSID,PASSWORD);
+  while(WiFi.status() != WL_CONNECTED){
+    Serial.println("Waiting for connection");
+    Serial.println(WiFi.status());
+    delay(1000);
+  }
+  Serial.print("Connected to ");
+  Serial.println(NETWORKSSID);
+  //Alarm at 2 AM to set the clock
+  //Enable I²C
+  Wire.begin();
   // Sync the Time with an online service
+  timeClient.begin();
+  rtc.begin();
   SyncRTC();
+  rtc.setAlarmTime(2,0,0);
+  rtc.enableAlarm(RTCZero::Alarm_Match::MATCH_HHMMSS);
+  rtc.attachInterrupt(SyncRTC);
+  Serial.println(timeClient.getEpochTime());
+  Serial.print(rtc.getHours());
+  Serial.print(":");
+  Serial.print(rtc.getMinutes());
+  Serial.print(":");
+  Serial.println(rtc.getSeconds());
   //init Temperature Sensor
   if(!tempsensor.begin(0x18)){
     Serial.println("Temp Sensor not found");
@@ -114,11 +128,11 @@ void loop() {
   //save whenever clock is at 0 in the last digit, only save once
   if(!rtc.getSeconds()%10 && lastsavedseconds != rtc.getSeconds()){
     lastsavedseconds = rtc.getSeconds();
-
+    Serial.println(Data.getMeasurements("\n"));
     }
 }
 
 void SyncRTC(){
-    timeClient.update();
+    timeClient.forceUpdate();
     rtc.setEpoch(timeClient.getEpochTime());
  }

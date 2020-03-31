@@ -32,17 +32,19 @@
 *.app
 
 
-
 # Files
 NetworkSettings.h
 
 #vscode
 .vscode
 
+#exclude ArduinoShieldBackups
+ArduinoShield/*.*-bak
+
 #include ArduinoShield Libraries exclude cache
 !ArduinoShield/*.lib
 ArduinoShield/fp-info-cache
-ArduinoShield/*.*-bak
+
 
 #build
 build
