@@ -41,4 +41,8 @@ NetworkSettings.h
 
 #include ArduinoShield Libraries exclude cache
 !ArduinoShield/*.lib
+ArduinoShield/*.*-bak
 ArduinoShield/fp-info-cache
+
+#build
+build
