@@ -23,7 +23,7 @@
 
 Adafruit_BME280 bme;
 Adafruit_MCP9808 tempsensor;
-DataBaseConnection DBConn = InfluxDBConnection("Server","Accesstoken", "", "","");
+InfluxDBConnection DBConn = InfluxDBConnection("192.168.0.172","LabMonitoring", INFLUXUSERNAME,INFLUXDBPASSWORD);
 
 //Adress according to Wiring and Spec Sheet
 ALS31300 Mag(0x96);
@@ -38,24 +38,37 @@ unsigned long prevMillis = (unsigned long)0xFFFFFFFFFFFFFFF;
 unsigned long millisec = 0;
 DataObject Data;
 int lastsavedseconds = -1;
+//validity of sensors
+bool tempValid;
+bool bmeValid;
+bool magValid;
+bool imuValid;
 
 RTCZero rtc;
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP);
 
 void setup() {
-  // Enable Serial port for debugging
+  // Enable Serial port for debugging, Setup LED pin
+  pinMode(13,OUTPUT);
+  digitalWrite(13,HIGH);
   Serial.begin(9600);
-  while (!Serial);
   //Comment if WPA2, Uncomment for WPA2 enterprise
   //WiFi.beginEnterprise(NETWORKSSID,USERNAME,PASSWORD);
   //Uncomment if WPA2, comment for WPA2 enterprise
   WiFi.begin(NETWORKSSID,PASSWORD);
   while(WiFi.status() != WL_CONNECTED){
     Serial.println("Waiting for connection");
-    Serial.println(WiFi.status());
+    if(WiFi.status() == 6){
+      WiFi.end();
+      delay(1000);
+      WiFi.begin(NETWORKSSID,PASSWORD);
+    }
+    //Serial.println(WiFi.status());
     delay(1000);
   }
+  WiFi.lowPowerMode();
+  digitalWrite(13,LOW);
   Serial.print("Connected to ");
   Serial.println(NETWORKSSID);
   //Alarm at 2 AM to set the clock
@@ -68,21 +81,22 @@ void setup() {
   rtc.setAlarmTime(2,0,0);
   rtc.enableAlarm(RTCZero::Alarm_Match::MATCH_HHMMSS);
   rtc.attachInterrupt(SyncRTC);
-  Serial.println(timeClient.getEpochTime());
+  Serial.print("Time: ");
   Serial.print(rtc.getHours());
   Serial.print(":");
   Serial.print(rtc.getMinutes());
   Serial.print(":");
   Serial.println(rtc.getSeconds());
   //init Temperature Sensor
-  if(!tempsensor.begin(0x18)){
+  tempValid = tempsensor.begin(0x18);
+  if(!tempValid){
     Serial.println("Temp Sensor not found");
     }
   tempsensor.setResolution(3);
   //Init BME280
-  if (!bme.begin(0x77, &Wire)) {
+  bmeValid = bme.begin(0x77, &Wire);
+  if (!bmeValid) {
       Serial.println("Could not find a valid BME280 sensor, check wiring or adress!");
-      while (1);
   }
   bme.setSampling(Adafruit_BME280::MODE_NORMAL,
                   Adafruit_BME280::SAMPLING_X1,   // temperature
@@ -91,45 +105,62 @@ void setup() {
                   Adafruit_BME280::FILTER_X16,
                   Adafruit_BME280::STANDBY_MS_0_5 );
    //init Magnetic Field Sensor
-   Mag.init();
+   magValid=Mag.init();
    //Set up accelerometer
-   IMU.begin(false);
-   IMU.setAccelerometer(B10100000,B00000000); //1.66kHz, 2g, 400Hz Filter Bandwidth, high power mode
-   IMU.setGyroscope(B00000000,B00000000); // Power-down gyroscope
+   imuValid = IMU.begin();
+   if(imuValid){
+     //IMU.setAccelerometer(B01000011,B00000000); //104hz,2g,50hz filter
+     IMU.setGyroscope(B00000000,B00000000); // Power-down gyroscope
+   }
+   else{
+     Serial.println("IMU error");
+    }
+   Serial.println("Setup complete");
 }
 
 void loop() {
   millisec = millis();
   // update temperature,pressure and humidity values if {millitempupdate} milliseconds have passed
   if(millisec-prevMillis >= millitempupdate){
-    float val = tempsensor.readTempC();
-    Data.LogTemp(val);
-    val = bme.readHumidity();
-    Data.LogHum(val);
-    val = bme.readPressure();
-    Data.LogPres(val);
+    if(tempValid){
+      float val = tempsensor.readTempC();
+      Data.LogTemp(val);
+    }
+    if(bmeValid){
+      float val = bme.readHumidity();
+      Data.LogHum(val);
+      val = bme.readPressure();
+      Data.LogPres(val);
+    }
   }
   // update temperature sensor value if {millimagupdate} milliseconds have passed
-  if(millisec-prevMillis >= millimagupdate){
+  if(millisec-prevMillis >= millimagupdate && magValid){
     auto value = Mag.readFullLoop();
     Data.LogMagField(value.mx,value.my,value.mz);
   }
   //get accelerometer data
-  if(IMU.accelerationAvailable()){
+  if(imuValid && IMU.accelerationAvailable()){
     float x,y,z;
     auto value = IMU.readAcceleration(x,y,z);
     Data.LogAcc(x,y,z);
     }
   //set current Millis
   prevMillis=millisec;
-  Serial.print("Loop took ");
-  Serial.print(millis()-millisec);
-  Serial.print(" milliseconds\n");
+  int newseconds = rtc.getSeconds();
   //save whenever clock is at 0 in the last digit, only save once
-  if(!rtc.getSeconds()%10 && lastsavedseconds != rtc.getSeconds()){
-    lastsavedseconds = rtc.getSeconds();
-    Serial.println(Data.getMeasurements("\n"));
+  if(!(newseconds%10) && lastsavedseconds != newseconds){
+    digitalWrite(13,HIGH);
+    lastsavedseconds = newseconds;
+    bool success = DBConn.writeToDataBase(Data);
+    if(success){
+      Serial.println("Success");
     }
+    else{
+      Serial.println("Fail");
+    }
+    digitalWrite(13,LOW);
+    }
+  delay(5);
 }
 
 void SyncRTC(){

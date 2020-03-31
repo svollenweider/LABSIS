@@ -16,7 +16,8 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
+#ifndef LSM6DS3
+#define LSM6DS3
 #include <Arduino.h>
 #include <Wire.h>
 #include <SPI.h>
@@ -35,13 +36,13 @@ class LSM6DS3Class {
     virtual int readAcceleration(float& x, float& y, float& z); // Results are in G (earth gravity).
     virtual float accelerationSampleRate(); // Sampling rate of the sensor.
     virtual int accelerationAvailable(); // Check for available data from accerometer
-    void setAccelerometer(byte Power,byte Frequency);
+    void setAccelerometer(byte Frequency);
 
     // Gyroscope
     virtual int readGyroscope(float& x, float& y, float& z); // Results are in degrees/second.
     virtual float gyroscopeSampleRate(); // Sampling rate of the sensor.
     virtual int gyroscopeAvailable(); // Check for available data from gyroscopeAvailable
-    void setGyroscope(byte Power,byte Frequency);
+    void setGyroscope(byte Frequency,byte Power);
 
 
   private:
@@ -61,3 +62,4 @@ class LSM6DS3Class {
 };
 
 extern LSM6DS3Class IMU;
+#endif

@@ -75,7 +75,7 @@ class ALS31300 {
     // public member functions
     SENSOR_DATA updateReading();
     SENSOR_DATA readFullLoop(int samples=12);
-    void init();
+    bool init();
     bool initOK();
 
     ALS_ERROR read(int busAddress, uint8_t address, uint32_t& value);

@@ -105,10 +105,9 @@ void LSM6DS3Class::setGyroscope(byte Frequency,byte Power){
     writeRegister(LSM6DS3_CTRL7_G, Power);
 }
 
-void LSM6DS3Class::setAccelerometer(byte Frequency,byte Power){
+void LSM6DS3Class::setAccelerometer(byte Frequency){
     //see https://www.st.com/resource/en/datasheet/lsm6ds3.pdf 9.13
     writeRegister(LSM6DS3_CTRL1_XL, Frequency);
-    writeRegister(LSM6DS3_CTRL6_C, Power);
 }
 
 void LSM6DS3Class::end()

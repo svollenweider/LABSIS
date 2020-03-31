@@ -1,5 +1,6 @@
 
 #include "DataObject.h"
+#include "NetworkSettings.h"
 #include <math.h>
 
 void DataObject::LogTemp(float value){
@@ -34,11 +35,16 @@ void DataObject::LogMagField(float x,float y, float z){
     }
 }
 
+
+//Gets measurement and resets the class
 String DataObject::getMeasurements(String separator){
-    String retstring =  "Temperature, sensor=SENSORNAME " + String(Temperature) + separator + 
-                        "Pressure, sensor=SENSORNAME " + String(Pressure) + separator +
-                        "Humidity, sensor=SENSORNAME " + String(Humidity) + separator +
-                        "Acceleration, sensor=SENSORNAME Max=" + String(MaxAcc) + ",Avg=" + String(AvgAcc) + separator +
-                        "MagField, sensor=SENSORNAME x_max=" + String(MaxMagField[0]) + ",y_max=" + String(MaxMagField[1])+ ",z_max=" + String(MaxMagField[2]) + 
-                        ",x_avg" + String(AvgMagField[0]) + ",y_avg" + String(AvgMagField[1])+ ",z_avg" + String(AvgMagField[2]);
+    String sensorname = SENSORNAME;
+    String retstring =  "Temperature,sensor=" + sensorname + " value=" + String(Temperature) + separator + 
+                        "Pressure,sensor=" + sensorname + " value=" + String(Pressure) + separator +
+                        "Humidity,sensor=" + sensorname + " value=" + String(Humidity) + separator +
+                        "Acceleration,sensor=" + sensorname + " Max=" + String(MaxAcc) + ",Avg=" + String(AvgAcc) + separator +
+                        "MagField,sensor=" + sensorname + " x_max=" + String(MaxMagField[0]) + ",y_max=" + String(MaxMagField[1])+ ",z_max=" + String(MaxMagField[2]) + 
+                        ",x_avg=" + String(AvgMagField[0]) + ",y_avg=" + String(AvgMagField[1])+ ",z_avg=" + String(AvgMagField[2]);
+    *this = DataObject();
+    return retstring;
 }

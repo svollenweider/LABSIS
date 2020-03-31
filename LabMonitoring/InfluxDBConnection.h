@@ -1,18 +1,20 @@
 #ifndef INFLUXDBCONNECTION
+#define INFLUXDBCONNECTION
+#include "Arduino.h"
 #include "DataBaseConnection.h"
 #include "WiFiNINA.h"
 
 class InfluxDBConnection : public DataBaseConnection {
 public:
-  InfluxDBConnection(String deviceName, String adress, String dbName, String username, String password);
-  InfluxDBConnection(String deviceName, String adress, String dbName, String accessToken);
-  virtual bool writeToDataBase(DataObject &Data);
+  InfluxDBConnection(String adress, String dbName, String username, String password);
+  InfluxDBConnection(String adress, String dbName, String accessToken);
+  virtual bool writeToDataBase(DataObject &Data) override;
 private:
-  WiFiSSLClient client;
+  WiFiClient client;
   String adress;
   String deviceName;
   String dataBaseString;
-  const uint8_t port = (uint8_t)8086;
+  const uint32_t port = (uint32_t)8086;
 };
 
 

@@ -25,7 +25,7 @@ ALS31300::ALS31300(int device_address) {
   i2c_address = device_address;
 }
 
-void ALS31300::init() {
+bool ALS31300::init() {
 
   // Enter customer access mode on the ALS31300
   ALS_ERROR error = write(i2c_address, 0x24, 0x2C413534);
@@ -43,6 +43,7 @@ void ALS31300::init() {
     Serial.println("Sensor error!");
     init_succeeded = false;
   }
+  return init_succeeded;
 }
 
 bool ALS31300::initOK() {
