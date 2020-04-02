@@ -1,5 +1,5 @@
 # LABSIS
-Laboratory Monitoring System
+Laboratory Monitoring System using an Arduino Nano 33 Iot. It records Temperature, Pressure, Humidity and Magnetic field. In addition it has connections to attach a 10kOhm thermistor, a flowmeter and relays. 
 
 # Library Prerequisites
 
