@@ -1,0 +1,7 @@
+# ignore Gerber Directory except the Zip file
+Gerber
+Gerber/**.zip
+
+#ignore Temp Files
+_autosave*
+~$*
