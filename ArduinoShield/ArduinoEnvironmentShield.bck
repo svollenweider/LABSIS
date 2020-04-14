@@ -1,3 +1,15 @@
 EESchema-DOCLIB  Version 2.0
 #
+$CMP Arduino_Nano_v3.x
+D Arduino Nano v3.x
+K Arduino nano microcontroller module USB
+F http://www.mouser.com/pdfdocs/Gravitech_Arduino_Nano3_0.pdf
+$ENDCMP
+#
+$CMP MCP9808_DFN
+D Microchip Technology Digital Temperature Sensor DFN
+K temperature sensor I2C
+F http://ww1.microchip.com/downloads/en/DeviceDoc/22203b.pdf
+$ENDCMP
+#
 #End Doc Library

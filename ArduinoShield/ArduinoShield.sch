@@ -128,7 +128,7 @@ U 1 1 5E6F2F0B
 P 9550 2100
 F 0 "A1" H 9550 1011 50  0000 C CNN
 F 1 "Arduino_Nano_v3.x" H 9550 920 50  0000 C CNN
-F 2 "Module:Arduino_Nano" H 9550 2100 50  0001 C CIN
+F 2 "ArduinoShield:Arduino_Nano" H 9550 2100 50  0001 C CIN
 F 3 "http://www.mouser.com/pdfdocs/Gravitech_Arduino_Nano3_0.pdf" H 9550 2100 50  0001 C CNN
 	1    9550 2100
 	1    0    0    -1  
