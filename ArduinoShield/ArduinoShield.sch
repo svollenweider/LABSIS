@@ -1281,27 +1281,9 @@ U 1 1 5E6BD66B
 P 1800 1650
 F 0 "U1" H 2244 1696 50  0000 L CNN
 F 1 "MCP9808_DFN" H 1969 1181 50  0000 L CNN
-<<<<<<< HEAD
-F 2 "Package_DFN_QFN:DFN-8-1EP_3x2mm_P0.5mm_EP1.3x1.5mm" H 700 1150 50  0001 C CNN
-=======
-F 2 "Package_DFN_QFN:DFN-8-1EP_3x3mm_P0.65mm_EP1.55x2.4mm" H 700 1150 50  0001 C CNN
->>>>>>> 1f3c3a37f257b2d62a46e0cecbb72a469f5a6ac4
-F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/22203b.pdf" H 1550 2100 50  0001 C CNN
+F 2 "" H 1800 1650 50  0001 C CNN
+F 3 "" H 1800 1650 50  0001 C CNN
 	1    1800 1650
 	1    0    0    -1  
 $EndComp
-<<<<<<< HEAD
-=======
-$Comp
-L ArduinoEnivronmentShield:MCP9808_DFN U?
-U 1 1 5EBF3F9E
-P 6950 4350
-F 0 "U?" H 7394 4396 50  0000 L CNN
-F 1 "MCP9808_DFN" H 7394 4305 50  0000 L CNN
-F 2 "Package_DFN_QFN:DFN-8-1EP_3x2mm_P0.5mm_EP1.3x1.5mm" H 5850 3850 50  0001 C CNN
-F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/22203b.pdf" H 6700 4800 50  0001 C CNN
-	1    6950 4350
-	1    0    0    -1  
-$EndComp
->>>>>>> 1f3c3a37f257b2d62a46e0cecbb72a469f5a6ac4
 $EndSCHEMATC
