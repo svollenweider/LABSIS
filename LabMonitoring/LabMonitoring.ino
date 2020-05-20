@@ -18,21 +18,20 @@
 #include <WiFiUDP.h>
 //DataObject
 #include "DataObject.h"
-#include "DataBaseConnection.h"
 #include "InfluxDBConnection.h"
 
 Adafruit_BME280 bme;
 Adafruit_MCP9808 tempsensor;
-InfluxDBConnection DBConn = InfluxDBConnection("192.168.0.172","LabMonitoring", INFLUXUSERNAME,INFLUXDBPASSWORD);
+InfluxDBConnection DBConn = InfluxDBConnection(INFLUXDBADRESS,INFLUXDBNAME,INFLUXUSERNAME,INFLUXDBPASSWORD);
 
 //Adress according to Wiring and Spec Sheet
 ALS31300 Mag(0x96);
 
 //updateinterval to database (s)
-unsigned int databaseinterval = 10;
+const unsigned int databaseinterval = 10;
 //updateinterval for the sensors (ms)
-unsigned long millitempupdate = 500;
-unsigned long millimagupdate = 100;
+const unsigned long millitempupdate = 500;
+const unsigned long millimagupdate = 100;
 //some large number that the loop starts immediately
 unsigned long prevMillis = (unsigned long)0xFFFFFFFFFFFFFFF;
 unsigned long millisec = 0;
@@ -160,6 +159,7 @@ void loop() {
     }
     digitalWrite(13,LOW);
     }
+  
   delay(5);
 }
 

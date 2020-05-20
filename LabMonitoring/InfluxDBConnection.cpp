@@ -14,11 +14,13 @@ InfluxDBConnection::InfluxDBConnection(String adress, String dbName, String acce
 
 bool InfluxDBConnection::writeToDataBase(DataObject &Data){
     //if connection successful
+    //change to connectSSL if necessary
     if(client.connect(adress.c_str(),port)){
+        //clones a HTTP post request
         client.println(dataBaseString);
         client.println("Host: " + adress + ":" + port);
-        client.println("Connection: close");
-        client.println("User-Agent: Arduino/1.0");
+        client.println("Connection: close"); //connection closes after request finished
+        client.println("User-Agent: Arduino/1.0"); // "Browser"
         client.print("Content-Length: ");
         String DataString = Data.getMeasurements("\n");
         client.println(DataString.length());
@@ -31,5 +33,4 @@ bool InfluxDBConnection::writeToDataBase(DataObject &Data){
         return successful;
     }
     return false;
-
 }

@@ -1,5 +1,6 @@
 #ifndef DATAOBJECT
 #define DATAOBJECT
+
 #include <Arduino.h>
 
 class DataObject{
